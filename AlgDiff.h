@@ -20,7 +20,7 @@ class AlgDiff{
     float get_delay(void);
 private:
     std::vector<float> newton_cotes_rules(const std::vector<float>& p, int order, int L);
-    std::vector<double> weightFcn(double a, double b, std::vector<double> &t);
+    std::vector<float> weightFcn(float a, float b, std::vector<float> &t);
     float __ts,__alpha,__beta,__T,__theta,__wc,delay;
     int __N;
     bool correction,__thetaBool;

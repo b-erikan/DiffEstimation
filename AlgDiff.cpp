@@ -61,9 +61,9 @@ void AlgDiff::discretize(int der, bool reduceFilLength, float redTol, bool discr
     int L0 = static_cast<int>(__T / __ts);
 }
 
-std::vector<double> AlgDiff::weightFcn(double a, double b, std::vector<double> &t)
+std::vector<float> AlgDiff::weightFcn(float a, float b, std::vector<float> &t)
 {
-    std::vector<double> w(t.size());
+    std::vector<float> w(t.size());
 
     if (a < 0 || b < 0)
     {
