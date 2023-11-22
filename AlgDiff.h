@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <cmath>
 /*
 #define MID_POINT 0
 #define EULER 1
@@ -16,9 +17,11 @@ class AlgDiff{
     float get_cutoffFreq(void);
     void computeTfromWc(float wc);
     void discretize(int der, bool reduceFilLength, float redTol, bool discreteSpectrum,method mtd);
+    float get_delay(void);
 private:
-    std::vector<double> newton_cotes_rules(const std::vector<double>& p, int order, int L);
-    float __ts,__alpha,__beta,__T,__theta,__wc;
+    std::vector<float> newton_cotes_rules(const std::vector<float>& p, int order, int L);
+    std::vector<double> weightFcn(double a, double b, std::vector<double> &t);
+    float __ts,__alpha,__beta,__T,__theta,__wc,delay;
     int __N;
     bool correction,__thetaBool;
     char __setUp;

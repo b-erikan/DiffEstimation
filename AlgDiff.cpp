@@ -59,11 +59,46 @@ void AlgDiff::computeTfromWc(float wc)
 void AlgDiff::discretize(int der, bool reduceFilLength, float redTol, bool discreteSpectrum, method mtd)
 {
     int L0 = static_cast<int>(__T / __ts);
-    float theta0 = 0;
-    theta = theta0;
-    L0 = int(self.__T / self.__ts);
-    tau1 = 0;
 }
+
+std::vector<double> AlgDiff::weightFcn(double a, double b, std::vector<double> &t)
+{
+    std::vector<double> w(t.size());
+
+    if (a < 0 || b < 0)
+    {
+        for (size_t i = 0; i < t.size(); ++i)
+        {
+            if (t[i] >= 1.0)
+                t[i] = 1.0;
+            if (t[i] <= -1.0)
+                t[i] = -1.0;
+
+            w[i] = std::pow(1.0 - t[i], a) * std::pow(t[i] + 1.0, b);
+
+            if (t[i] >= 1.0 || t[i] <= -1.0)
+                w[i] = 0.0;
+        }
+    }
+    else
+    {
+        for (size_t i = 0; i < t.size(); ++i)
+        {
+            if (t[i] > 1.0)
+                t[i] = 1.1;
+            if (t[i] < -1.0)
+                t[i] = -1.1;
+
+            w[i] = std::pow(1.0 - t[i], a) * std::pow(t[i] + 1.0, b);
+
+            if (t[i] > 1.0 || t[i] < -1.0)
+                w[i] = 0.0;
+        }
+    }
+
+    return w;
+}
+
 std::vector<float> AlgDiff::newton_cotes_rules(const std::vector<float> &p, int order, int L)
 {
     // We don't have numpy arrays so I used vectors instead. May not need it.
