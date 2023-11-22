@@ -32,6 +32,19 @@ AlgDiff::AlgDiff(float ts, float alpha, float beta, int N, float T, float wc, bo
         throw std::invalid_argument("T or wc must be given."); // Maybe unnecessary to check?
 }
 
+float AlgDiff::get_delay()
+{
+    if (0 == __N)
+    {
+        delay = (__alpha + 1) / (__alpha + __beta + 2) * __T;
+    }
+    else
+    {
+        delay = (1 - __theta) / 2 * __T;
+    }
+    return delay;
+}
+
 float AlgDiff::get_cutoffFreq(void)
 {
     // Calculate wc based on T here.
@@ -43,9 +56,33 @@ void AlgDiff::computeTfromWc(float wc)
     return;
 }
 
-void AlgDiff::discretize(int der, bool reduceFilLength, float redTol, bool discreteSpectrum,method mtd)
+void AlgDiff::discretize(int der, bool reduceFilLength, float redTol, bool discreteSpectrum, method mtd)
 {
-    int L0=static_cast<int>(__T/__ts);
-    
+    int L0 = static_cast<int>(__T / __ts);
+    float theta0 = 0;
+    theta = theta0;
+    L0 = int(self.__T / self.__ts);
+    tau1 = 0;
+}
+std::vector<float> AlgDiff::newton_cotes_rules(const std::vector<float> &p, int order, int L)
+{
+    // We don't have numpy arrays so I used vectors instead. May not need it.
+    order -= 1;
+    std::vector<float> out(L, 0.0);
+    out[0] = p[0];
 
+    for (int i = 1; i < L - 1; ++i)
+    {
+        if (i % order == 0)
+        {
+            out[i] = p[0] + p.back();
+        }
+        else
+        {
+            out[i] = p[i % order];
+        }
+    }
+
+    out.back() = p.back();
+    return out;
 }
