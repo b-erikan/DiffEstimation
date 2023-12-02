@@ -32,6 +32,18 @@ AlgDiff::AlgDiff(float ts, float alpha, float beta, int N, float T, float wc, bo
         throw std::invalid_argument("T or wc must be given."); // Maybe unnecessary to check?
 }
 
+std::vector<float> AlgDiff::timeShift(std::vector<float> &t)
+{
+    std::vector<float> result;
+    result.reserve(t.size());
+
+    for (float val : t)
+    {
+        result.push_back(1.0 - 2.0 / __T * val);
+    }
+
+    return result;
+}
 float AlgDiff::get_delay()
 {
     if (0 == __N)
@@ -59,6 +71,22 @@ void AlgDiff::computeTfromWc(float wc)
 void AlgDiff::discretize(int der, bool reduceFilLength, float redTol, bool discreteSpectrum, method mtd)
 {
     int L0 = static_cast<int>(__T / __ts);
+    
+    switch (mtd)
+    {
+    case mid_point:
+
+    case euler:
+        break;
+    case trapezoidal:
+        break;
+    case simpson_rule:
+        break;
+    case simpson_38_rule:
+        break;
+    case boole_rule:
+        break;
+    }
 }
 
 std::vector<float> AlgDiff::weightFcn(float a, float b, std::vector<float> &t)
@@ -99,6 +127,7 @@ std::vector<float> AlgDiff::weightFcn(float a, float b, std::vector<float> &t)
     return w;
 }
 
+/*
 std::vector<float> AlgDiff::newton_cotes_rules(const std::vector<float> &p, int order, int L)
 {
     // We don't have numpy arrays so I used vectors instead. May not need it.
@@ -120,4 +149,4 @@ std::vector<float> AlgDiff::newton_cotes_rules(const std::vector<float> &p, int 
 
     out.back() = p.back();
     return out;
-}
+}*/
