@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <cmath>
+#include "/home/berke/Downloads/boost_1_83_0/boost/math/special_functions/jacobi.hpp" //Careful with this!!
 /*
 #define MID_POINT 0
 #define EULER 1
@@ -19,11 +20,12 @@ public:
     void computeTfromWc(float wc);
     void discretize(int der, bool reduceFilLength, float redTol, bool discreteSpectrum,method mtd);
     float get_delay(void);
-    std::vector<float> weightFcn(float a, float b, std::vector<float> &t);
-    std::vector<float> timeShift(std::vector<float> &t);
+    std::vector<float> evalKernelDer(std::vector<float> &t, int k);
+    
 private:
     //std::vector<float> newton_cotes_rules(const std::vector<float>& p, int order, int L);
-   
+    std::vector<float> weightFcn(float a, float b, std::vector<float> &t);
+    std::vector<float> timeShift(std::vector<float> &t);
     float __ts,__alpha,__beta,__T,__theta,__wc,delay;
     int __N;
     bool correction,__thetaBool;

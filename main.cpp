@@ -5,7 +5,7 @@ int main(void){
     /*This is a testbench for the AlgDiff class. When it's done, I will give the same inputs to both algebraicDiferentiator.py and AlgDiff.cpp and compare the outputs.*/
 
 
-    //double val = tgamma(0.32551);
+    //double val = tgamma(0.32551); Gamma works.
     float ts=0.001, T=0.068, alpha=4.0, beta=4.0, wc=100;
     int N=0;
     bool corr=false;

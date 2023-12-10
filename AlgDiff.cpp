@@ -71,7 +71,7 @@ void AlgDiff::computeTfromWc(float wc)
 void AlgDiff::discretize(int der, bool reduceFilLength, float redTol, bool discreteSpectrum, method mtd)
 {
     int L0 = static_cast<int>(__T / __ts);
-    
+
     switch (mtd)
     {
     case mid_point:
@@ -125,6 +125,30 @@ std::vector<float> AlgDiff::weightFcn(float a, float b, std::vector<float> &t)
     }
 
     return w;
+}
+
+std::vector<float> AlgDiff::evalKernelDer(std::vector<float> &t, int k)
+{
+    //This function needs work!!! Totally wrong...
+    float a = __alpha;
+    float b = __beta;
+    // float dg = 0;
+    std::vector<float> shifted_t = timeShift(t);
+    std::vector<float> w = weightFcn(a - k, b - k, shifted_t);
+    std::vector<float> out;
+    for (int i = 0; i <= __N; ++i)
+    {
+        double h = pow(2, a + b + 1) * tgamma(i + a + 1) * tgamma(i + b + 1) / (tgamma(i) * (2 * i + a + b + 1) * tgamma(i + a + b + 1));
+        std::vector<float> P;
+        for (float var : shifted_t)
+        {
+            P.push_back(boost::math::jacobi(i + k, a - k, b - k, var));
+        }
+        out = P;
+        // dg += 1 / h * boost::math::jacobi(i, a, b, __theta) * P * tgamma(i + 1 + k)/tgamma(i + 1);
+    }
+
+    return out;
 }
 
 /*
