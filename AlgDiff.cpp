@@ -44,6 +44,46 @@ std::vector<float> AlgDiff::timeShift(std::vector<float> &t)
 
     return result;
 }
+std::vector<float> AlgDiff::convolution(const std::vector<float> &x,
+                                        const std::vector<float> &weights,
+                                        const std::string &conv_type)
+{
+    int N = weights.size() - 1;
+    std::vector<float> result;
+
+    if (conv_type == "valid")
+    {
+        // Convolve the input signal with the weights and add zeros to the left
+        result.resize(N);
+        result.insert(result.end(), x.begin(), x.end());
+        for (int i = 0; i < N; ++i)
+        {
+            double sum = 0.0;
+            for (int j = 0; j < weights.size(); ++j)
+            {
+                sum += result[i + j] * weights[j];
+            }
+            result[i] = sum;
+        }
+    }
+    else
+    {
+        // Convolve the input signal with the weights and add zeros to both sides
+        result.resize(x.size() + N);
+        for (int i = 0; i < x.size(); ++i)
+        {
+            double sum = 0.0;
+            for (int j = 0; j < weights.size(); ++j)
+            {
+                sum += x[i + j] * weights[j];
+            }
+            result[i + N / 2] = sum;
+        }
+    }
+
+    return result;
+}
+
 float AlgDiff::get_delay()
 {
     if (0 == __N)
@@ -129,7 +169,7 @@ std::vector<float> AlgDiff::weightFcn(float a, float b, std::vector<float> &t)
 
 std::vector<float> AlgDiff::evalKernelDer(std::vector<float> &t, int k)
 {
-    //This function needs work!!! Totally wrong...
+    // This function needs work!!! Totally wrong...
     float a = __alpha;
     float b = __beta;
     // float dg = 0;
@@ -150,7 +190,11 @@ std::vector<float> AlgDiff::evalKernelDer(std::vector<float> &t, int k)
 
     return out;
 }
-
+std::vector<float> AlgDiff::estimateDer(const int der,const std::vector<float> &x){
+    __w={0.00209468,  0.08364409,  0.28054109,  0.38788526,  0.27344734,
+        0.05872276, -0.05375467, -0.03154697, -0.00103358};
+    return convolution(x,__w,"same");
+}
 /*
 std::vector<float> AlgDiff::newton_cotes_rules(const std::vector<float> &p, int order, int L)
 {

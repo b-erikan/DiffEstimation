@@ -2,17 +2,23 @@
 #include "AlgDiff.h"
 #include "AlgDiff.cpp"
 int main(void){
-    /*This is a testbench for the AlgDiff class. When it's done, I will give the same inputs to both algebraicDiferentiator.py and AlgDiff.cpp and compare the outputs.*/
+    /*This is a testbench for the AlgDiff class.*/
 
 
     //double val = tgamma(0.32551); Gamma works.
-    float ts=0.001, T=0.068, alpha=4.0, beta=4.0, wc=100;
+    float ts=0.001, T=0.009, alpha=4.0, beta=4.0, wc=1000;
     int N=0;
     bool corr=false;
     AlgDiff diff(ts,alpha,beta,N,T,wc,corr);
 
 
-    std::vector<float> t={0.2,0.3,0.4,0.5};
+    std::vector<float> x={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20};
+    
+    std::vector<float> dx=diff.estimateDer(1,x);
+
+    for(float x:dx){
+        std::cout<<x<<std::endl;
+    } 
     /*
 
     timeShift works.
