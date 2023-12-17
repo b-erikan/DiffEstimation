@@ -44,44 +44,37 @@ std::vector<float> AlgDiff::timeShift(std::vector<float> &t)
 
     return result;
 }
-std::vector<float> AlgDiff::convolution(const std::vector<float> &x,
-                                        const std::vector<float> &weights,
-                                        const std::string &conv_type)
+std::vector<float> AlgDiff::specialConvolve(const std::vector<float> &x)
 {
-    int N = weights.size() - 1;
+    size_t wSize = __w.size();
+    size_t xSize = x.size();
+    size_t outputSize = wSize + xSize - 1;
     std::vector<float> result;
+    float sum = 0;
 
-    if (conv_type == "valid")
+    for (int i = 0; i < outputSize; i++)
     {
-        // Convolve the input signal with the weights and add zeros to the left
-        result.resize(N);
-        result.insert(result.end(), x.begin(), x.end());
-        for (int i = 0; i < N; ++i)
+        int iter = i;
+        for (int j = 0; j <= i; j++)
         {
-            double sum = 0.0;
-            for (int j = 0; j < weights.size(); ++j)
+            if (xSize <= j || wSize <= iter)
+                sum;
+            else
             {
-                sum += result[i + j] * weights[j];
+                sum += x.at(j) * __w.at(iter);
             }
-            result[i] = sum;
+            iter--;
         }
+        result.push_back(sum);
+        sum = 0;
     }
-    else
+    std::vector<float> output(result.cbegin() + (wSize / 2), result.cend() - (wSize / 2));
+    for (int i = 0; i < wSize / 2; i++)
     {
-        // Convolve the input signal with the weights and add zeros to both sides
-        result.resize(x.size() + N);
-        for (int i = 0; i < x.size(); ++i)
-        {
-            double sum = 0.0;
-            for (int j = 0; j < weights.size(); ++j)
-            {
-                sum += x[i + j] * weights[j];
-            }
-            result[i + N / 2] = sum;
-        }
+        output.insert(output.begin(), 0);
+        output.pop_back();
     }
-
-    return result;
+    return output;
 }
 
 float AlgDiff::get_delay()
@@ -190,10 +183,23 @@ std::vector<float> AlgDiff::evalKernelDer(std::vector<float> &t, int k)
 
     return out;
 }
-std::vector<float> AlgDiff::estimateDer(const int der,const std::vector<float> &x){
-    __w={0.00209468,  0.08364409,  0.28054109,  0.38788526,  0.27344734,
-        0.05872276, -0.05375467, -0.03154697, -0.00103358};
-    return convolution(x,__w,"same");
+std::vector<float> AlgDiff::estimateDer(const unsigned der, const std::vector<float> &x)
+{
+    
+    if (0 == der)
+    {
+        __w = {0.00209468, 0.08364409, 0.28054109, 0.38788526, 0.27344734,
+               0.05872276, -0.05375467, -0.03154697, -0.00103358};
+    }
+    else if (1 == der)
+    {
+        __w = {15.30847194, 158.49429167, 191.74630732, -3.36629456,
+               -200.59170407, -188.09790359, -30.50232806, 47.87577424,
+               7.35648253};
+    }
+
+    return specialConvolve(x);
+    // return convWithWeights(x);
 }
 /*
 std::vector<float> AlgDiff::newton_cotes_rules(const std::vector<float> &p, int order, int L)
